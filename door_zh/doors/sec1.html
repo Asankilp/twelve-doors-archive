@@ -6,18 +6,19 @@
     window.RufflePlayer = window.RufflePlayer || {};
     window.RufflePlayer.config = {
       ...window.RufflePlayer.config,
-
+      "deviceFontRenderer": "embedded",
+      "logLevel": "debug",
       "autoplay": "on",
       "fontSources": [
-        "https://twelve-doors-archive.vercel.app/assets/WenJinMinchoCP3-Regular.ttf"
-      ]
-      // "defaultFonts": {
-      //   "japaneseGothicMono": ["SimSun"],
-      //   "japaneseGothic": ["SimSun"],
+        "../../assets/WenJinMinchoCP3-Regular.ttf"
+      ],
+      "defaultFonts": {
+        // "japaneseGothic": ["WenJinMincho"],
+        "japaneseGothicMono": ["文津宋體C 第3平面"],
       //   "japaneseMincho": ["SimSun"],
       //   "sans": ["SimSun"],
       //   "serif": ["SimSun"],
-      // }
+      }
     }
     window.addEventListener("load", (event) => {
         const ruffle = window.RufflePlayer.newest();
