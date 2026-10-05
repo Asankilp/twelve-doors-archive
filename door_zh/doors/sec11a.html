@@ -2,16 +2,28 @@
 <head>
 <title>sec11a</title>
 <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
-<script language="JavaScript">
-<!--
-function MM_reloadPage(init) {  //reloads the window if Nav4 resized
-  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
-    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
-  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
-}
-MM_reloadPage(true);
-// -->
+<script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+      ...window.RufflePlayer.config,
+      "deviceFontRenderer": "embedded",
+      "logLevel": "info",
+      "autoplay": "on",
+      "fontSources": [
+        "../../assets/WenJinMinchoCP0-Regular.ttf"
+      ],
+      "defaultFonts": {
+        "japaneseGothicMono": ["文津宋體C 第0平面"],
+      }
+    }
+    window.addEventListener("load", (event) => {
+        const ruffle = window.RufflePlayer.newest();
+        const player = ruffle.createPlayer();
+        const container = document.getElementById("container");
+        container.appendChild(player);
+    });
 </script>
+<script src="../../assets/ruffle.js"></script>
 </head>
 
 <body bgcolor="#000000" text="#999999">
@@ -21,10 +33,10 @@ MM_reloadPage(true);
 <table width="30%" border="0">
     <tr>
       <td>　</td>
-      <td><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,0,0" width="640" height="480">
+      <td><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,0,0" width="1280" height="720">
           <param name=movie value="sect11a.swf">
           <param name=quality value=high>
-          <embed src="sect11a.swf" quality=high pluginspage="http://www.macromedia.com/jp/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="640" height="480">
+          <embed src="sect11a.swf" quality=high pluginspage="http://www.macromedia.com/jp/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="1280" height="720">
           </embed> 
         </object></td>
       <td>　</td>

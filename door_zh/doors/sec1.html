@@ -7,17 +7,13 @@
     window.RufflePlayer.config = {
       ...window.RufflePlayer.config,
       "deviceFontRenderer": "embedded",
-      "logLevel": "debug",
+      "logLevel": "info",
       "autoplay": "on",
       "fontSources": [
         "../../assets/WenJinMinchoCP0-Regular.ttf"
       ],
       "defaultFonts": {
-        // "japaneseGothic": ["WenJinMincho"],
         "japaneseGothicMono": ["文津宋體C 第0平面"],
-      //   "japaneseMincho": ["SimSun"],
-      //   "sans": ["SimSun"],
-      //   "serif": ["SimSun"],
       }
     }
     window.addEventListener("load", (event) => {
@@ -25,7 +21,6 @@
         const player = ruffle.createPlayer();
         const container = document.getElementById("container");
         container.appendChild(player);
-        player.ruffle().load("movie.swf");
     });
 </script>
 <script src="../../assets/ruffle.js"></script>
@@ -37,10 +32,10 @@
 <table width="99%" border="0" height="53">
   <tr> 
     <td height="34" width="6%">　</td>
-    <td height="34" width="91%"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,0,0" width="640" height="480">
+    <td height="34" width="91%"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,0,0" width="1280" height="720">
         <param name=movie value="sec1.swf">
         <param name=quality value=high>
-        <embed src="sec1.swf" quality=high pluginspage="http://www.macromedia.com/jp/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="640" height="480">
+        <embed src="sec1.swf" quality=high pluginspage="http://www.macromedia.com/jp/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="1280" height="720">
         </embed> 
       </object></td>
     <td height="34" width="3%">　</td>
