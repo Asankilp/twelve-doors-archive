@@ -250,7 +250,6 @@
   .notice h2::before{background:var(--amber); box-shadow:0 0 10px var(--amber);}
   .notice a{color:#e0bc63; text-decoration:underline; text-underline-offset:3px;}
   .notice a:hover{color:#ffd98a;}
-
   /* ---------- launch buttons ---------- */
   .launch{margin:42px 0 8px;}
   .launch-grid{
@@ -307,6 +306,39 @@
     color:#5f5451;
   }
   footer .sep{color:var(--red-dim);}
+  footer .foot-name{
+    color:#8a7b77;
+    letter-spacing:.14em;
+  }
+  footer .foot-repo{margin-top:4px;}
+  footer .foot-credit{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid #200a0a;
+    line-height:2.1;
+  }
+  footer strong{color:#a1908b; font-weight:700;}
+
+  /* ---------- external links ---------- */
+  a.ext{
+    color:#d8b46a;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    text-decoration-thickness:1px;
+    text-decoration-color:rgba(216,180,106,.45);
+    transition:color .2s, text-decoration-color .2s;
+  }
+  a.ext:hover{
+    color:#ffd98a;
+    text-decoration-color:rgba(255,217,138,.85);
+  }
+  a.ext:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+  a.ext::after{
+    content:"↗";
+    font-size:.85em;
+    margin-left:.35em;
+    opacity:.7;
+  }
 
   /* ---------- language visibility ----------
      An element tagged .ja or .en also carries a base display rule
@@ -462,6 +494,10 @@
           本アーカイブは、オリジナルの Flash 版を <strong>Ruffle</strong> エミュレータで
           再生する構成になっています。最新のブラウザでそのまま動作します。
         </p>
+        <p>
+          使用している Ruffle は、<strong>本作向けの改修版</strong>です。<br>
+          <a class="ext" href="https://github.com/Asankilp/ruffle" target="_blank" rel="noopener noreferrer">改修版 Ruffle のリポジトリ</a>
+        </p>
         <ul class="warnlist">
           <li>JavaScript を有効にしてください。</li>
           <li>初回読み込み時に TTF ファイルを取得するため、少し時間がかかります。</li>
@@ -472,6 +508,10 @@
         <p>
           本站存档使用 <strong>Ruffle</strong> 模拟器来运行原版 Flash 游戏，
           在现代浏览器中可直接游玩。
+        </p>
+        <p>
+          所用 Ruffle 为<strong>针对本作修改的版本</strong>。<br>
+          <a class="ext" href="https://github.com/Asankilp/ruffle" target="_blank" rel="noopener noreferrer">修改版 Ruffle 仓库</a>
         </p>
         <ul class="warnlist">
           <li>请确保已启用 JavaScript。</li>
@@ -499,13 +539,24 @@
   </main>
 
   <footer>
-    <p>
-      Twelve Doors <span class="sep">/</span>
-      <span class="ja">Twelve Doors</span><span class="en">十二扇门</span>
+    <p class="foot-name">
+      Twelve Doors <span class="sep">/</span> 十二扇门
     </p>
-    <p>
-      <span class="ja">オリジナル版の著作権は原作者に帰属します。本サイトは非公式の保存アーカイブです。</span>
-      <span class="en">原版版权归原作者所有。本站为非官方存档站点。</span>
+
+    <p class="foot-repo">
+      <a class="ext" href="https://github.com/Asankilp/twelve-doors-archive"
+         target="_blank" rel="noopener noreferrer"><span class="ja">保存アーカイブのリポジトリ</span><span class="en">存档仓库</span></a>
+    </p>
+
+    <p class="foot-credit">
+      <span class="ja">
+        『Twelve Doors』の原作・著作権は <strong>SANETOMO KIKUCHI</strong> 氏に帰属します。<br>
+        本サイトは非公式の保存アーカイブであり、原作者・配布元とは一切関係ありません。
+      </span>
+      <span class="en">
+        《Twelve Doors》的原作与著作权归 <strong>SANETOMO KIKUCHI</strong> 所有。<br>
+        本站为非官方存档，与原作者及发行方没有任何关系。
+      </span>
     </p>
   </footer>
 
