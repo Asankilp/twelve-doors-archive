@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twelve Doors / 十二扇门</title>
+<style>
+  :root{
+    --bg:#000000;
+    --panel:#0e0e0e;
+    --panel2:#0a0a0a;
+    --line:#451111;
+    --line2:#7a1c1c;
+    --red:#c01414;
+    --red-hot:#ff2a2a;
+    --red-dim:#8e1414;
+    --amber:#ffc63a;
+    --body:#bcb0ac;
+    --dim:#877a76;
+
+    /* UI / Latin text: keep the Latin monospace face first so the
+       technical look survives, then CJK fallbacks. */
+    --font-ui:"MS Gothic","Yu Gothic","Hiragino Kaku Gothic ProN",
+              "Microsoft YaHei","PingFang SC",monospace,sans-serif;
+
+    /* Japanese content: Japanese faces first. */
+    --font-ja:"Yu Gothic","Yu Gothic UI","Hiragino Kaku Gothic ProN",
+              "Hiragino Sans","Meiryo","MS Gothic","Noto Sans JP",
+              "Microsoft YaHei",sans-serif;
+
+    /* Mainland-China Simplified Chinese content: Simplified faces first.
+       Do NOT lead with a Japanese face here - that would render Chinese
+       with Japanese glyph variants (直/画/门/骨 etc. differ). */
+    --font-zh:"Microsoft YaHei","Microsoft YaHei UI","PingFang SC",
+              "Hiragino Sans GB","Source Han Sans SC","Noto Sans SC",
+              "Noto Sans CJK SC","WenQuanYi Micro Hei","Heiti SC",
+              "SimHei","SimSun",sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+
+  html{-webkit-text-size-adjust:100%;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:#000;
+    background-image:
+      radial-gradient(ellipse 130% 80% at 50% -10%, #180404 0%, rgba(24,4,4,0) 62%),
+      radial-gradient(ellipse 110% 70% at 50% 115%, #120303 0%, rgba(18,3,3,0) 58%);
+    background-attachment:fixed;
+    color:var(--body);
+    font-family:var(--font-ui);
+    font-size:15px;
+    line-height:1.95;
+    letter-spacing:.02em;
+  }
+
+  /* faint scanline + vignette wash */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:9;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.016) 0 1px,
+      rgba(0,0,0,0) 1px 3px);
+    mix-blend-mode:overlay;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:8;
+    box-shadow:inset 0 0 220px 70px #000;
+  }
+
+  .wrap{
+    position:relative; z-index:10;
+    max-width:820px;
+    margin:0 auto;
+    padding:54px 22px 70px;
+  }
+
+  /* ---------- language switch ---------- */
+  .switch{
+    display:flex; justify-content:center; gap:10px;
+    margin-bottom:44px;
+  }
+  .switch button{
+    font-size:12px; letter-spacing:.16em;
+    color:var(--dim);
+    background:transparent;
+    border:1px solid #331010;
+    padding:7px 20px;
+    cursor:pointer;
+    transition:color .2s, border-color .2s, background .2s;
+  }
+  .switch button:hover{color:var(--red-hot); border-color:var(--line2);}
+  .switch button[aria-pressed="true"]{
+    color:#000;
+    background:var(--red);
+    border-color:var(--red-hot);
+    font-weight:700;
+  }
+  .switch button:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+
+  /* ---------- title ---------- */
+  header{text-align:center; margin-bottom:30px;}
+
+  .eyebrow{
+    font-size:11px; letter-spacing:.42em; text-indent:.42em;
+    color:var(--red-dim);
+    margin:0 0 16px;
+  }
+
+  h1{
+    margin:0;
+    font-size:clamp(38px,10vw,68px);
+    font-weight:400;
+    letter-spacing:.12em; text-indent:.12em;
+    line-height:1;
+    color:#e6dedb;
+    text-shadow:
+      0 0 3px rgba(255,42,42,.60),
+      0 0 22px rgba(255,42,42,.34),
+      0 0 54px rgba(180,0,0,.28);
+  }
+  h1 .num{
+    color:var(--red-hot);
+    text-shadow:
+      0 0 4px rgba(255,42,42,.95),
+      0 0 26px rgba(255,42,42,.60),
+      0 0 60px rgba(200,0,0,.45);
+  }
+
+  .sub{
+    margin:16px 0 0;
+    font-size:12px; letter-spacing:.30em; text-indent:.30em;
+    color:var(--dim);
+  }
+
+  .rule{
+    height:1px; border:0; margin:30px 0;
+    background:linear-gradient(90deg,
+      rgba(0,0,0,0) 0%,
+      var(--line2) 22%,
+      var(--red-hot) 50%,
+      var(--line2) 78%,
+      rgba(0,0,0,0) 100%);
+    opacity:.85;
+  }
+
+  /* ---------- panels ---------- */
+  .panel{
+    background:linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
+    border:1px solid var(--line);
+    border-left:3px solid var(--red-dim);
+    padding:24px 26px;
+    margin:0 0 26px;
+  }
+
+  .panel h2{
+    margin:0 0 16px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.20em; text-indent:.20em;
+    color:var(--amber);
+    display:flex; align-items:center; gap:11px;
+  }
+  .panel h2::before{
+    content:"";
+    width:7px; height:7px;
+    background:var(--red);
+    box-shadow:0 0 10px var(--red-hot);
+    flex:0 0 auto;
+    transform:rotate(45deg);
+  }
+
+  p{margin:0 0 14px;}
+  p:last-child{margin-bottom:0;}
+
+  .lead{
+    color:#cdc3bf;
+    text-align:justify;
+  }
+
+  /* quoted in-game opening narration */
+  blockquote{
+    margin:18px 0 0;
+    padding:14px 18px;
+    border-left:2px solid var(--line2);
+    background:rgba(255,255,255,.018);
+    color:#9c918d;
+    font-size:13.5px;
+    line-height:1.9;
+    white-space:pre-line;
+  }
+  blockquote cite{
+    display:block;
+    margin-top:12px;
+    font-size:11px;
+    font-style:normal;
+    letter-spacing:.14em;
+    color:#6d5f5c;
+  }
+
+  /* ---------- warning ---------- */
+  .warn{
+    background:linear-gradient(180deg,#140505 0%,#0b0202 100%);
+    border:1px solid var(--line2);
+    border-left:3px solid var(--red-hot);
+    box-shadow:inset 0 0 40px rgba(160,0,0,.13);
+  }
+  .warn h2{color:#ff6b6b;}
+  .warn h2::before{background:var(--red-hot);}
+
+  ul.warnlist{
+    list-style:none;
+    margin:0; padding:0;
+    font-size:14px;
+  }
+  ul.warnlist li{
+    position:relative;
+    padding-left:22px;
+    margin-bottom:9px;
+  }
+  ul.warnlist li:last-child{margin-bottom:0;}
+  ul.warnlist li::before{
+    content:"▸";
+    position:absolute; left:2px; top:0;
+    color:var(--red-hot);
+  }
+  .warn-note{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px dashed var(--line2);
+    font-size:12.5px;
+    color:#a1968f;
+  }
+
+  /* ---------- notice (hosting / broken link) ---------- */
+  .notice{
+    background:#0c0906;
+    border:1px solid #3a2d10;
+    border-left:3px solid var(--amber);
+    font-size:13px;
+    color:#b3a68c;
+  }
+  .notice h2{color:var(--amber);}
+  .notice h2::before{background:var(--amber); box-shadow:0 0 10px var(--amber);}
+  .notice a{color:#e0bc63; text-decoration:underline; text-underline-offset:3px;}
+  .notice a:hover{color:#ffd98a;}
+
+  /* ---------- launch buttons ---------- */
+  .launch{margin:42px 0 8px;}
+  .launch-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:600px){
+    .launch-grid{grid-template-columns:1fr;}
+  }
+
+  .btn{
+    position:relative;
+    display:block;
+    padding:22px 20px;
+    text-align:center;
+    text-decoration:none;
+    border:1px solid var(--line2);
+    background:linear-gradient(180deg,#120404 0%,#080202 100%);
+    transition:border-color .22s, box-shadow .22s, background .22s, transform .12s;
+  }
+  .btn .btn-lang{
+    display:block;
+    font-size:17px;
+    letter-spacing:.14em; text-indent:.14em;
+    color:#e8e0dd;
+    margin-bottom:7px;
+  }
+  .btn .btn-path{
+    display:block;
+    font-size:11px;
+    letter-spacing:.10em;
+    color:var(--dim);
+  }
+  .btn:hover{
+    border-color:var(--red-hot);
+    background:linear-gradient(180deg,#250707 0%,#0e0202 100%);
+    box-shadow:0 0 26px rgba(255,42,42,.30), inset 0 0 24px rgba(255,42,42,.10);
+  }
+  .btn:hover .btn-lang{color:#fff;}
+  .btn:hover .btn-path{color:#c9a9a5;}
+  .btn:active{transform:translateY(1px);}
+  .btn:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+
+  /* ---------- footer ---------- */
+  footer{
+    margin-top:46px;
+    padding-top:22px;
+    border-top:1px solid #2a0d0d;
+    text-align:center;
+    font-size:11px;
+    line-height:2;
+    letter-spacing:.08em;
+    color:#5f5451;
+  }
+  footer .sep{color:var(--red-dim);}
+
+  /* ---------- language visibility ----------
+     An element tagged .ja or .en also carries a base display rule
+     (.sub, .btn-lang, .btn-path …) that would win a specificity tie.
+     Scoping these under `html` makes them outrank those class rules.
+     display:block matches every one of those bases, so the element
+     keeps its intended block role when it becomes visible.
+     Default (pre-JS) state = Japanese only, so the page is always
+     readable even before the script runs.                        */
+  .en{display:none;}
+
+  html[data-lang="ja"] .ja,
+  html[data-lang="zh"] .en{display:block;}
+  html[data-lang="ja"] .en,
+  html[data-lang="zh"] .ja{display:none;}
+
+  /* labels inside a heading or sentence must stay inline */
+  html[data-lang="ja"] h2 span.ja,
+  html[data-lang="zh"] h2 span.en,
+  html[data-lang="ja"] footer span.ja,
+  html[data-lang="zh"] footer span.en{display:inline;}
+
+  /* ---------- language-specific typography ----------
+     Content language drives the face: .ja blocks are Japanese, .en
+     blocks are Mainland Simplified Chinese.  Each rule is scoped under
+     `html` so its specificity (0,2,1) beats the base class rules
+     (.btn .btn-lang, .sub …) and the tie-breaker .en{display:none}.
+
+     The Chinese stack deliberately leads with Simplified faces: putting
+     a Japanese face first would render Chinese with Japanese glyph
+     variants (直/画/门/骨/复 differ), which is the wrong convention. */
+  html .ja{font-family:var(--font-ja);}
+  html .en{font-family:var(--font-zh);}
+
+  /* UI chrome with pure-Latin labels keeps the technical face.
+     (CJK labels are NOT forced here - they must follow the current
+     language's face, so 中文 renders with the Simplified stack.)     */
+  .btn .btn-path,
+  footer .sep{font-family:var(--font-ui);}
+
+  /* the big wordmark is content, so let it follow the language face */
+  html[data-lang="zh"] h1{font-family:var(--font-zh);}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="switch" aria-label="Language / 言語 / 语言">
+    <button type="button" id="btn-ja" aria-pressed="true"  lang="ja">日本語</button>
+    <button type="button" id="btn-zh" aria-pressed="false" lang="zh">中文</button>
+  </nav>
+
+  <header>
+    <p class="eyebrow">HORROR ADVENTURE GAME</p>
+    <h1><span class="num">Twelve</span> Doors</h1>
+    <p class="sub ja">Twelve Doors</p>
+    <p class="sub en">十二扇门</p>
+    <hr class="rule">
+  </header>
+
+  <main>
+
+    <!-- ======== ABOUT ======== -->
+    <section class="panel">
+      <h2><span class="ja">ゲーム紹介</span><span class="en">游戏介绍</span></h2>
+
+      <!-- Japanese -->
+      <div class="ja">
+        <p class="lead">
+          『Twelve Doors』は、閉ざされた施設を舞台にしたホラーアドベンチャーゲームです。
+          記憶を失った主人公は、懐中電灯と工具ケースだけを手に、
+          十二の扉の向こうへと足を踏み入れていきます。
+        </p>
+        <p class="lead">
+          手がかりを集め、仕掛けを解き、少しずつ失われた記憶を取り戻していく――
+          しかしこの場所で待っているのは、答えだけではないのかもしれません。
+        </p>
+        <blockquote>ふと気付いた時には、もう何も覚えていなかった。
+ここが何処なのか、ここで何をしているのか、
+そして…自分が誰なのか。
+右手には懐中電灯、左手にはジュラルミンケース。
+全身を包み込む防護服は重く、
+視界を遮るマスクはカビ臭い。
+そして、ここはとても薄暗い…。<cite>― ゲーム冒頭のモノローグより</cite></blockquote>
+      </div>
+
+      <!-- Chinese -->
+      <div class="en">
+        <p class="lead">
+          《Twelve Doors／十二扇门》是一款以封闭设施为舞台的恐怖解谜冒险游戏。
+          失去记忆的主角，手中只剩一支手电筒和一只手提箱，
+          一步步走向那十二扇门之后的黑暗。
+        </p>
+        <p class="lead">
+          收集线索、破解机关，逐渐找回遗失的记忆——
+          然而在这里等待着的，也许并不只是答案。
+        </p>
+        <blockquote>回过神来时，我已经什么都不记得了。
+这里是哪里，我在这里做什么，
+还有……我究竟是谁。
+右手是手电筒，左手是铝制手提箱。
+包裹全身的防护服很沉重，
+遮挡视野的面罩散发着霉味。
+而这里，非常昏暗……<cite>—— 摘自游戏开场独白</cite></blockquote>
+      </div>
+    </section>
+
+    <!-- ======== CONTENT WARNING ======== -->
+    <section class="panel warn">
+      <h2><span class="ja">閲覧に関する警告</span><span class="en">内容警告</span></h2>
+
+      <div class="ja">
+        <p><strong style="color:#ff8a8a;">このゲームにはグロテスクな表現が含まれています。</strong></p>
+        <ul class="warnlist">
+          <li>ホラー・サスペンスを目的とした、刺激の強い表現</li>
+          <li>流血・死体・その他グロテスクな描写</li>
+          <li>突然の大きな音や、驚かせる演出（ジャンプスケア）</li>
+          <li>暗い閉鎖空間での探索を伴う内容</li>
+        </ul>
+        <p class="warn-note">
+          小学生のみなさんへ：このゲームは「おっきいおともだち」のためのゲームです。
+          あそぶのはまだはやいです。どうしてあそんではいけないのかわからないときは、
+          おとうさんかおかあさんにきいてみましょう。
+        </p>
+      </div>
+
+      <div class="en">
+        <p><strong style="color:#ff8a8a;">本游戏含有血腥、恐怖等令人不适的内容。</strong></p>
+        <ul class="warnlist">
+          <li>以恐怖、悬疑为目的的强烈刺激表现</li>
+          <li>流血、尸体及其他血腥猎奇描写</li>
+          <li>突如其来的巨响与惊吓演出（Jump Scare）</li>
+          <li>涉及在黑暗封闭空间中的探索</li>
+        </ul>
+        <p class="warn-note">
+          致小学生：这款游戏是给「大朋友」准备的。
+          现在玩它还太早了。如果你不明白为什么不能玩，
+          就去问问爸爸妈妈吧。
+        </p>
+      </div>
+    </section>
+
+    <!-- ======== NOTICE ======== -->
+    <section class="panel notice">
+      <h2><span class="ja">起動について</span><span class="en">运行说明</span></h2>
+
+      <div class="ja">
+        <p>
+          本アーカイブは、オリジナルの Flash 版を <strong>Ruffle</strong> エミュレータで
+          再生する構成になっています。最新のブラウザでそのまま動作します。
+        </p>
+        <ul class="warnlist">
+          <li>JavaScript を有効にしてください。</li>
+          <li>初回読み込み時に TTF ファイルを取得するため、少し時間がかかります。</li>
+        </ul>
+      </div>
+
+      <div class="en">
+        <p>
+          本站存档使用 <strong>Ruffle</strong> 模拟器来运行原版 Flash 游戏，
+          在现代浏览器中可直接游玩。
+        </p>
+        <ul class="warnlist">
+          <li>请确保已启用 JavaScript。</li>
+          <li>首次加载需要下载 TTF 文件，可能稍慢。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======== LAUNCH ======== -->
+    <section class="launch" aria-label="Play / ゲームを始める / 开始游戏">
+      <div class="launch-grid">
+        <a class="btn" href="door/d-top.html">
+          <span class="btn-lang ja">日本語版をプレイ</span>
+          <span class="btn-lang en">日文原版</span>
+          <span class="btn-path">door/d-top.html</span>
+        </a>
+        <a class="btn" href="door_zh/d-top.html">
+          <span class="btn-lang ja">中国語版をプレイ</span>
+          <span class="btn-lang en">中文版</span>
+          <span class="btn-path">door_zh/d-top.html</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>
+      Twelve Doors <span class="sep">/</span>
+      <span class="ja">Twelve Doors</span><span class="en">十二扇门</span>
+    </p>
+    <p>
+      <span class="ja">オリジナル版の著作権は原作者に帰属します。本サイトは非公式の保存アーカイブです。</span>
+      <span class="en">原版版权归原作者所有。本站为非官方存档站点。</span>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btnJa = document.getElementById('btn-ja');
+  var btnZh = document.getElementById('btn-zh');
+
+  function setLang(lang) {
+    root.setAttribute('data-lang', lang);
+    root.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'ja');
+    btnJa.setAttribute('aria-pressed', String(lang === 'ja'));
+    btnZh.setAttribute('aria-pressed', String(lang === 'zh'));
+    try { localStorage.setItem('twelve-doors-lang', lang); } catch (e) {}
+  }
+
+  btnJa.addEventListener('click', function () { setLang('ja'); });
+  btnZh.addEventListener('click', function () { setLang('zh'); });
+
+  // saved preference, else browser preference, else Japanese
+  var saved = null;
+  try { saved = localStorage.getItem('twelve-doors-lang'); } catch (e) {}
+  if (saved === 'ja' || saved === 'zh') {
+    setLang(saved);
+  } else {
+    var nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    setLang(nav.indexOf('zh') === 0 ? 'zh' : 'ja');
+  }
+})();
+</script>
+</body>
+</html>
